@@ -1,0 +1,12 @@
+# n=5 customers, m=3 facilities
+5 3
+# customer demands
+11 3 5 13 8
+# production capacities
+21 23 5
+# fix costs
+100 112 50
+# cost matrix for delivery costs
+16 19 15 11 13
+20 18 17 6 6
+18 19 19 10 15

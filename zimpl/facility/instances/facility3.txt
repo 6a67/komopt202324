@@ -1,0 +1,14 @@
+# n=10 customers, m=5 facilities
+10 5
+# customer demands
+53 92 31 37 71 91 49 63 42 80
+# production capacities
+111 58 243 282 137
+# fix costs
+558 965 809 171 396
+# cost matrix for delivery costs
+7 5 4 5 8 6 7 1 9 2
+5 3 6 2 7 5 1 2 9 6
+1 6 3 7 1 1 6 8 9 7
+7 5 6 6 6 9 4 1 2 1
+7 3 2 9 6 3 4 9 2 7

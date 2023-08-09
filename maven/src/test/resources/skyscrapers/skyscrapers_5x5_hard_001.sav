@@ -1,0 +1,17 @@
+# Skyscrapers
+#game field size
+5 5
+#north constraints
+0 0 0 0 0
+#east constraints
+2 0 1 0 5
+#south constraints
+0 0 2 0 0
+#west constraints
+0 0 0 3 0
+#game field
+0 0 0 0 0
+0 3 0 0 0
+0 0 0 0 0
+0 0 0 0 0
+0 0 0 0 0

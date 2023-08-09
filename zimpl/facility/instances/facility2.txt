@@ -1,0 +1,12 @@
+# n=7 customers, m=3 facilities
+7 3
+# customer demands
+66 79 74 73 12 11 42
+# production capacities
+25 112 284
+# fix costs
+195 411 531
+# cost matrix for delivery costs
+37 59 50 22 44 28 54
+50 67 47 69 22 44 22
+55 26 64 23 25 36 43

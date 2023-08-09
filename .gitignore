@@ -1,0 +1,12 @@
+maven/target/
+maven/out/
+maven/.idea
+.settings
+*.jar
+*.project
+*.classpath
+*.class
+*.DS_Store
+*.lp
+*.log
+*.tbl
