@@ -2,6 +2,7 @@ package de.uos.inf.ko.knapsack;
 
 import de.uos.inf.ko.knapsack.reader.Reader;
 import de.uos.inf.ko.knapsack.solver.student.*;
+import de.uos.inf.ko.utils.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -68,8 +69,9 @@ public class ResultsTest {
   private final static int SOLUTION_VALUE = 4;
   private final static int SOLUTION_TIME = 5;
 
-  public static <SolutionType extends GenericSolution<?>> void runSolver(SolverInterface<SolutionType> solver, Instance instance,
-      ArrayList<String>[] valueMatrix, boolean binary) {
+  public static <SolutionType extends GenericSolution<?>> void runSolver(
+      SolverInterface<SolutionType> solver, Instance instance, ArrayList<String>[] valueMatrix,
+      boolean binary) {
     // solve it
     long start = System.currentTimeMillis();
 
@@ -106,15 +108,19 @@ public class ResultsTest {
     }
   }
 
-  public static <SolutionType extends GenericSolution<?>> void runSolver(SolverInterface<SolutionType> solver, Instance instance,
-      ArrayList<String>[] valueMatrix) {
+  public static <SolutionType extends GenericSolution<?>> void runSolver(
+      SolverInterface<SolutionType> solver, Instance instance, ArrayList<String>[] valueMatrix) {
     runSolver(solver, instance, valueMatrix, true);
   }
 
   public static void main(String[] args) throws IOException {
+
+    Logger.enable();
+
     final int FRST_ENTRY = 0;
     final int SECD_ENTRY = 1;
-    int[][] instances = new int[][] {{10, 1}, {15, 1}, {20, 2}, {30, 1}, {40, 1}, {50, 1}, {60, 1}, {100, 2}, {500, 1}, {1000, 1}//, {5000,2}, {10000,5}
+    int[][] instances = new int[][] {{10, 1}, {15, 1}, {20, 2}, {30, 1}, {40, 1}, {50, 1}, {60, 1},
+        {100, 2}, {500, 1}, {1000, 1}// , {5000,2}, {10000,5}
     };
 
     int index = 0;
@@ -126,7 +132,8 @@ public class ResultsTest {
 
     for (int i = 0; i < instances.length; i++) {
       for (int j = 1; j <= instances[i][SECD_ENTRY]; j++) {
-        final String filename = "rucksack" + String.format("%05d", instances[i][FRST_ENTRY]) + "-" + j + ".txt";
+        final String filename =
+            "rucksack" + String.format("%05d", instances[i][FRST_ENTRY]) + "-" + j + ".txt";
         final Instance instance = Reader.readInstance(KNAPSACK_INSTANCES_PATH + filename);
         instance.setFilename(filename);
         System.out.println("# Instance file: " + filename);
@@ -142,7 +149,8 @@ public class ResultsTest {
       }
     }
 
-    String[] header = new String[] {"solver name", "filename", "#items", "capacity", "value", "time"};
+    String[] header =
+        new String[] {"solver name", "filename", "#items", "capacity", "value", "time"};
     String[][] matrix = new String[valueMatrix.length][valueMatrix[0].size()];
     for (int i = 0; i < valueMatrix.length; i++) {
       matrix[i] = valueMatrix[i].toArray(new String[0]);
