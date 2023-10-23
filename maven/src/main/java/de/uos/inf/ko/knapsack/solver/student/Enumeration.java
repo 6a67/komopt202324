@@ -26,13 +26,15 @@ public class Enumeration implements SolverInterface<Solution> {
     for (int i = 0; i < numSolutions; i++) {
       Solution solution = new Solution(instance);
       // generate possible solution for the current iteration
-      /*
-       * i = 5 = 101 001 first iteration step (j = 0) => 101 & 001 = 001 != 0 => solution.set(0, 1)
-       * 010 second iteration step (j = 1) => 101 & 010 = 000 == 0 => solution.set(1, 0) 100 third
-       * iteration step (j = 2) => 101 & 100 = 100 != 0 => solution.set(2, 1) solution: [1, 0, 1]
-       * 
-       * i = 6 = 110 solution: [0, 1, 1]
-       */
+      
+      //  i = 5 =  101
+      //           001 first iteration step (j = 0) => 101 & 001 = 001 != 0 => solution.set(0, 1)
+      //           010 second iteration step (j = 1) => 101 & 010 = 000 == 0 => solution.set(1, 0)
+      //           100 third iteration step (j = 2) => 101 & 100 = 100 != 0 => solution.set(2, 1)
+      //  solution: [1, 0, 1]
+       
+      //  i = 6 = 110
+      //  solution: [0, 1, 1]
       for (int j = 0; j < numItems; j++) {
         if ((i & (1 << j)) != 0) {
           solution.set(j, 1);
