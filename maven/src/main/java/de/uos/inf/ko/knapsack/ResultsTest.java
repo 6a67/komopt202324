@@ -123,38 +123,54 @@ public class ResultsTest {
         {100, 2}, {500, 1}, {1000, 1}// , {5000,2}, {10000,5}
     };
 
-    int index = 0;
-    final int COLUMN_NUMER = 6;
-    ArrayList<String>[] valueMatrix = new ArrayList[COLUMN_NUMER];
-    for (int i = 0; i < valueMatrix.length; i++) {
-      valueMatrix[i] = new ArrayList<>(20);
-    }
+    ArrayList<SolverInterface<?>> solvers = new ArrayList<>();
+    solvers.add(new Enumeration());
+    solvers.add(new GreedyHeuristic());
+    solvers.add(new FractionalSolver());
 
-    for (int i = 0; i < instances.length; i++) {
-      for (int j = 1; j <= instances[i][SECD_ENTRY]; j++) {
-        final String filename =
-            "rucksack" + String.format("%05d", instances[i][FRST_ENTRY]) + "-" + j + ".txt";
-        final Instance instance = Reader.readInstance(KNAPSACK_INSTANCES_PATH + filename);
-        instance.setFilename(filename);
-        System.out.println("# Instance file: " + filename);
-        System.out.println("# Number of items: " + instance.getSize());
-        System.out.println("# Capacity of knapsack: " + instance.getCapacity());
-
-        if (instance.getSize() <= 20) {
-          runSolver(new Enumeration(), instance, valueMatrix);
-        }
-
-
-
+    for (SolverInterface<?> solver : solvers) {
+      int index = 0;
+      final int COLUMN_NUMER = 6;
+      ArrayList<String>[] valueMatrix = new ArrayList[COLUMN_NUMER];
+      for (int i = 0; i < valueMatrix.length; i++) {
+        valueMatrix[i] = new ArrayList<>(20);
       }
-    }
 
-    String[] header =
-        new String[] {"solver name", "filename", "#items", "capacity", "value", "time"};
-    String[][] matrix = new String[valueMatrix.length][valueMatrix[0].size()];
-    for (int i = 0; i < valueMatrix.length; i++) {
-      matrix[i] = valueMatrix[i].toArray(new String[0]);
+      for (int i = 0; i < instances.length; i++) {
+        for (int j = 1; j <= instances[i][SECD_ENTRY]; j++) {
+          final String filename =
+              "rucksack" + String.format("%05d", instances[i][FRST_ENTRY]) + "-" + j + ".txt";
+          final Instance instance = Reader.readInstance(KNAPSACK_INSTANCES_PATH + filename);
+          instance.setFilename(filename);
+          System.out.println("# Instance file: " + filename);
+          System.out.println("# Number of items: " + instance.getSize());
+          System.out.println("# Capacity of knapsack: " + instance.getCapacity());
+
+
+          if (solver instanceof Enumeration && instance.getSize() > 20) {
+            break;
+          }
+          if (solver instanceof FractionalSolver) {
+            runSolver((SolverInterface<GenericSolution<Double>>) solver, instance, valueMatrix);
+          } else {
+            runSolver((SolverInterface<GenericSolution<Integer>>) solver, instance, valueMatrix);
+          }
+
+          // runSolver(solver, instance, valueMatrix);
+
+
+
+        }
+      }
+
+      String[] header =
+          new String[] {"solver name", "filename", "#items", "capacity", "value", "time"};
+      String[][] matrix = new String[valueMatrix.length][valueMatrix[0].size()];
+      for (int i = 0; i < valueMatrix.length; i++) {
+        matrix[i] = valueMatrix[i].toArray(new String[0]);
+      }
+      printMatrix(matrix, header);
     }
-    printMatrix(matrix, header);
   }
+
 }
