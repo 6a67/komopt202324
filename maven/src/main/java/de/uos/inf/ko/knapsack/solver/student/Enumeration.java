@@ -58,9 +58,9 @@ public class Enumeration implements SolverInterface<Solution> {
         numOptimalSolutions++;
       }
 
-      Logger.println("Objective function value: " + value);
-      Logger.println("Weight: " + weight);
-      Logger.println("Feasible status: " + solution.isFeasible());
+      // Logger.println("Objective function value: " + value);
+      // Logger.println("Weight: " + weight);
+      // Logger.println("Feasible status: " + solution.isFeasible());
     }
 
     Logger.println("Number of all solutions: " + numSolutions);
