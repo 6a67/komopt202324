@@ -127,6 +127,8 @@ public class ResultsTest {
     solvers.add(new Enumeration());
     solvers.add(new GreedyHeuristic());
     solvers.add(new FractionalSolver());
+    solvers.add(new BranchAndBound());
+    solvers.add(new ConstraintProgramming());
 
     for (SolverInterface<?> solver : solvers) {
       int index = 0;
@@ -150,6 +152,14 @@ public class ResultsTest {
           if (solver instanceof Enumeration && instance.getSize() > 20) {
             break;
           }
+          if (solver instanceof BranchAndBound && instance.getSize() > 100) {
+            break;
+          }
+          if (solver instanceof ConstraintProgramming && instance.getSize() > 50) {
+            break;
+          }
+
+
           if (solver instanceof FractionalSolver) {
             runSolver((SolverInterface<GenericSolution<Double>>) solver, instance, valueMatrix);
           } else {
