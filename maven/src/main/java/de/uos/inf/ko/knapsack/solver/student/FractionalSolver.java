@@ -1,117 +1,67 @@
 package de.uos.inf.ko.knapsack.solver.student;
 
-import java.util.PriorityQueue;
+import java.util.Arrays;
+import java.util.Comparator;
 import de.uos.inf.ko.knapsack.FractionalSolution;
 import de.uos.inf.ko.knapsack.Instance;
 import de.uos.inf.ko.knapsack.SolverInterface;
 
 /**
- * An optimal greedy solver for the fractional knapsack problem.
+ * An optimal fractional solver (greedy)
  *
- * @author
+ * @author Stephan Beyer
  */
 public class FractionalSolver implements SolverInterface<FractionalSolution> {
+  private Instance instance;
 
-  /**
-   * This method solves the given knapsack instance using a fractional approach.
-   * It creates a priority queue of items sorted by value per weight, and adds items to the solution
-   * until the knapsack's capacity is reached. If an item cannot be added completely, it is added
-   * fractionally. The method returns a fractional solution.
-   *
-   * @param instance the knapsack instance to be solved
-   * @return a fractional solution to the given knapsack instance
-   */
-  @Override
-  public FractionalSolution solve(Instance instance) {
-    // iterate over values in instance, calculate value per weight and sort
-    int[] weightArray = instance.getWeightArray();
-    int[] valueArray = instance.getValueArray();
+  private double getRatio(int i) {
+    return (double) instance.getValue(i) / instance.getWeight(i);
+  }
 
-    // create a priority queue of items sorted by value per weight
-    PriorityQueue<Item> itemQueue =
-        new PriorityQueue<Item>(valueArray.length, new ItemComparator().reversed());
+  public FractionalSolution solve(Instance inst) {
+    instance = inst;
 
-    // add items to queue
-    for (int i = 0; i < weightArray.length; i++) {
-      itemQueue.add(new Item(i, valueArray[i], weightArray[i]));
+    // make array for index permutation
+    Integer[] perm = new Integer[instance.getSize()];
+    for (int i = 0; i < perm.length; ++i) {
+      perm[i] = i;
     }
 
-    // create fractional solution
-    FractionalSolution fractionalSolution = new FractionalSolution(instance);
+    // sort it by cost-per-weight ratio in descending order
+    Arrays.sort(perm, new Comparator<Integer>() {
+      public int compare(Integer o1, Integer o2) {
+        double ratio1 = getRatio(o1);
+        double ratio2 = getRatio(o2);
 
-    // add items to solution
-    while (!itemQueue.isEmpty()) {
-      Item item = itemQueue.poll();
-      if (fractionalSolution.getWeight() + item.getWeight() <= instance.getCapacity()) {
-        fractionalSolution.set(item.getIndex(), 1.0);
+        if (ratio1 == ratio2) {
+          return 0;
+        }
+        if (ratio1 < ratio2) {
+          return 1;
+        }
+        return -1;
+      }
+    });
+
+    // make solution
+    FractionalSolution solution = new FractionalSolution(instance);
+    for (int i : perm) {
+      final double remaining = (double) instance.getCapacity() -
+          solution.getWeight();
+      if ((double) instance.getWeight(i) <= remaining) {
+        solution.set(i, 1.0);
       } else {
-        fractionalSolution.set(item.getIndex(),
-            (instance.getCapacity() - fractionalSolution.getWeight()) / item.getWeight());
+        final double part = remaining / instance.getWeight(i);
+        solution.set(i, part);
         break;
       }
     }
-    return fractionalSolution;
+
+    return solution;
   }
 
   @Override
   public String getName() {
-    return "Fractional(s)";
-  }
-
-  /**
-   * Represents an item in the knapsack problem, with its index, value, weight, and value per weight ratio.
-   */
-  private class Item {
-    private int index;
-    private int value;
-    private int weight;
-    private double valuePerWeight;
-
-    public Item(int index, int value, int weight) {
-      this.index = index;
-      this.value = value;
-      this.weight = weight;
-      this.valuePerWeight = (double) value / weight;
-    }
-
-    public int getIndex() {
-      return index;
-    }
-
-    public int getValue() {
-      return value;
-    }
-
-    public int getWeight() {
-      return weight;
-    }
-
-    public double getValuePerWeight() {
-      return valuePerWeight;
-    }
-
-    public String toString() {
-      return "Item: " + value + " " + weight + " " + valuePerWeight;
-    }
-  }
-
-
-  /**
-   * This private class implements the Comparator interface to compare two items based on their value per weight ratio.
-   * If the value per weight ratio of the first item is greater than the second item, it returns 1.
-   * If the value per weight ratio of the first item is less than the second item, it returns -1.
-   * If the value per weight ratio of both items are equal, it returns 0.
-   */
-  private class ItemComparator implements java.util.Comparator<Item> {
-    @Override
-    public int compare(Item item1, Item item2) {
-      if (item1.getValuePerWeight() > item2.getValuePerWeight()) {
-        return 1;
-      } else if (item1.getValuePerWeight() < item2.getValuePerWeight()) {
-        return -1;
-      } else {
-        return 0;
-      }
-    }
+    return "Frac(l)";
   }
 }
