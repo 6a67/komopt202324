@@ -38,6 +38,19 @@ public class Instance {
     this.filename = "";
   }
 
+  /**
+   * Constructs a new instance of the knapsack problem with the given number of items and capacity.
+   *
+   * @param number the number of items in the instance
+   * @param capacity the capacity of the knapsack
+   */
+  public Instance(int number, int capacity) {
+    c = new int[number];
+    w = new int[number];
+    this.filename = "";
+    this.W = capacity;
+  }
+
   public void setFilename(String filename) {
     this.filename = filename;
   }
