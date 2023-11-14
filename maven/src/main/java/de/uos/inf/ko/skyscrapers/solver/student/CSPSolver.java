@@ -12,9 +12,20 @@ import java.util.List;
 /**
  * A skyscrapers solver.
  *
+ * This class provides a solver for the Skyscrapers problem. It uses the Choco Solver library to create a model
+ * and solve the problem. The solve() method takes an Instance object as input and returns a new Instance object
+ * with the solved gamefield.
+ *
  * @author
  */
 public class CSPSolver {
+    
+    /**
+     * Solves a Skyscrapers instance.
+     *
+     * @param instance the Skyscrapers instance to solve
+     * @return a new Instance object with the solved gamefield
+     */
     public static Instance solve(Instance instance) {
         // 1. create model
         Model model = new Model("Skyscraper Instance");
