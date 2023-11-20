@@ -129,6 +129,7 @@ public class ResultsTest {
     solvers.add(new FractionalSolver());
     solvers.add(new BranchAndBound());
     solvers.add(new ConstraintProgramming());
+    solvers.add(new SimulatedAnnealing());
 
     for (SolverInterface<?> solver : solvers) {
       int index = 0;
