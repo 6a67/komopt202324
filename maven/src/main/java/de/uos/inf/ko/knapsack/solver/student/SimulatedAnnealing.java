@@ -22,7 +22,7 @@ public class SimulatedAnnealing implements SolverInterface<Solution> {
   }
 
   private enum AnnealingSchedule {
-    LINEAR, EXPONENTIAL
+    LINEAR, INVERSE
   }
 
   private enum BreakCondition {
@@ -79,16 +79,16 @@ public class SimulatedAnnealing implements SolverInterface<Solution> {
     this.instance = instance;
 
     InitialSolution initialSolution = InitialSolution.RANDOM;
-    AnnealingSchedule annealingSchedule = AnnealingSchedule.LINEAR;
-    BreakCondition breakCondition = BreakCondition.TEMPERATURE;
+    AnnealingSchedule annealingSchedule = AnnealingSchedule.INVERSE;
+    BreakCondition breakCondition = BreakCondition.ITERATIONS;
     Reheat reheat = Reheat.NONE;
 
     // Values for BreakCondition.ITERATIONS and BreakCondition.TEMPERATURE
     final int maxIterations = 10000;
-    final double minTemp = 0.01;
+    final double minTemp = 0.0001;
 
     // Initial temperature
-    double temperature = 10000000;
+    double temperature = 1000;
 
     int i = 0;
     Solution s;
@@ -112,16 +112,16 @@ public class SimulatedAnnealing implements SolverInterface<Solution> {
     boolean stop = false;
 
     do {
-      Solution sT = flipRandomBit(sStar);
+      Solution sT = flipRandomBit(s);
       double cT = sT.getValue();
       // System.out.println("cT:" + cT);
 
       switch (annealingSchedule) {
         case LINEAR:
-          temperature = 0.999 * temperature;
+          temperature = 0.9999 * temperature;
           break;
-        case EXPONENTIAL:
-          temperature = temperature / (i + 1);
+        case INVERSE:
+          temperature = temperature / (i * 0.000000001 + 1);
           break;
         default:
           throw new IllegalArgumentException("Unknown annealing schedule");
@@ -133,8 +133,6 @@ public class SimulatedAnnealing implements SolverInterface<Solution> {
       // System.out.println("Temperature:" + temperature);
 
       double expValue = clamp(Math.exp(-(cT - c) / temperature), 0.0, 1.0);
-
-      System.out.println("Exp:" + expValue);
 
 
       if ((cT >= c) || (random.nextDouble() < expValue)) {
@@ -169,9 +167,6 @@ public class SimulatedAnnealing implements SolverInterface<Solution> {
           throw new IllegalArgumentException("Unknown break condition");
       }
 
-      if (expValue < 0.00001) {
-        stop = true;
-      }
     } while (!stop);
 
     return sStar;
