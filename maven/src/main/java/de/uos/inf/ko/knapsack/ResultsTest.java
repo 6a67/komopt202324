@@ -130,6 +130,7 @@ public class ResultsTest {
     solvers.add(new BranchAndBound());
     solvers.add(new ConstraintProgramming());
     solvers.add(new SimulatedAnnealing());
+    solvers.add(new TabuSearch());
 
     for (SolverInterface<?> solver : solvers) {
       int index = 0;
