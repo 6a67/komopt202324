@@ -15,41 +15,56 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class TabuSearch implements SolverInterface<Solution> {
 
-  private int tabuListSize = 10;
+  private int tabuListSize = 100;
 
   private final Random random = new Random();
 
-  private enum InitialSolutionType {
+  public enum InitialSolutionType {
     RANDOM, GREEDY
   }
 
-  private enum TerminationCondition {
+  public enum TerminationCondition {
     ITERATIONS, IMPROVEMENTLIMIT // terminates if no improvement is made for a given number of iterations
   }
 
-  private enum AttributeType {
+  public enum AttributeType {
     SOLUTIONS, INDEX
   }
 
-  private enum AllowedSolutions {
+  public enum AllowedSolutions {
     FEASIBLE, INFEASIBLE
   }
 
+  private final InitialSolutionType initialSolutionType;
+  private final TerminationCondition terminationCondition;
+  private final AttributeType attributeType;
+  private final AllowedSolutions allowedSolutions;
+
+  public TabuSearch() {
+    this(InitialSolutionType.GREEDY, TerminationCondition.ITERATIONS, AttributeType.SOLUTIONS, AllowedSolutions.FEASIBLE);
+  }
+
+  public TabuSearch(InitialSolutionType initialSolutionType, TerminationCondition terminationCondition, AttributeType attributeType, AllowedSolutions allowedSolutions) {
+    super();
+    this.initialSolutionType = initialSolutionType;
+    this.terminationCondition = terminationCondition;
+    this.attributeType = attributeType;
+    this.allowedSolutions = allowedSolutions;
+  }
+
+
   @Override
   public Solution solve(Instance instance) {
+    // Print configuration
+    System.out.println("Initial solution type: " + initialSolutionType);
+    System.out.println("Termination condition: " + terminationCondition);
+    System.out.println("Attribute type: " + attributeType);
+    System.out.println("Allowed solutions: " + allowedSolutions);
+
     // Values for different variants of the algorithm
-    InitialSolutionType initialSolutionType = InitialSolutionType.GREEDY;
-    TerminationCondition terminationCondition = TerminationCondition.ITERATIONS;
     final int improvementLimit = 100;
     int lastImprovement = 0;
     final int maxIterations = 1000;
-    AttributeType attributeType = AttributeType.INDEX;
-    AllowedSolutions allowedSolutions = AllowedSolutions.FEASIBLE;
-
-    // If attribute type is index, the tabu list size must be smaller than the number of items
-    if (attributeType == AttributeType.INDEX && tabuListSize >= instance.getSize()) {
-      tabuListSize = instance.getSize() - 1;
-    }
 
     // Initialize the current solution
     Solution currentSolution = generateInitialSolution(instance, initialSolutionType);
@@ -84,18 +99,25 @@ public class TabuSearch implements SolverInterface<Solution> {
           continue;
         }
 
+        int solValue = solution.getValue();
+
+        if(!solution.isFeasible()) {
+          double factor = 1.0 - (0.5 * ((solution.getWeight() - instance.getCapacity())) / (double) instance.getCapacity());
+          solValue = (int) (solValue * factor);
+        }
+
         // Check if the solution is tabu and update the best neighbor if necessary depending on the attribute type
         switch (attributeType) {
           case SOLUTIONS:
             if (!tabuList.contains(solution)
-                && (bestNeighbor == null || solution.getValue() > bestNeighbor.getValue())) {
+                && (bestNeighbor == null || solValue > bestNeighbor.getValue())) {
               bestNeighbor = solution;
               currentIndex = index;
             }
             break;
           case INDEX:
             if (!tabuListIndices.contains(index)
-                && (bestNeighbor == null || solution.getValue() > bestNeighbor.getValue())) {
+                && (bestNeighbor == null || solValue > bestNeighbor.getValue())) {
               bestNeighbor = solution;
               currentIndex = index;
             }
@@ -103,6 +125,15 @@ public class TabuSearch implements SolverInterface<Solution> {
           default:
             throw new IllegalArgumentException("Unknown attribute type");
         }
+      }
+
+      // no valid solution found, switching to another search branch
+      // Um das Verfahren trotzdem fortsetzen zu können, löschen wir solange den ältesten Eintrag in der Tabuliste,
+      // bis ein zulässiger Nachbar existiert
+      if (bestNeighbor == null) {
+        tabuList.remove(0);
+        tabuListIndices.remove(0);
+        continue;
       }
 
       // Update the current solution

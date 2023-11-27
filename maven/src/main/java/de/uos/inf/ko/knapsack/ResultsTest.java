@@ -5,6 +5,7 @@ import de.uos.inf.ko.knapsack.solver.student.*;
 import de.uos.inf.ko.utils.Logger;
 import java.io.IOException;
 import java.util.ArrayList;
+import de.uos.inf.ko.knapsack.solver.student.TabuSearch.*;
 
 public class ResultsTest {
 
@@ -130,7 +131,16 @@ public class ResultsTest {
     solvers.add(new BranchAndBound());
     solvers.add(new ConstraintProgramming());
     solvers.add(new SimulatedAnnealing());
-    solvers.add(new TabuSearch());
+
+    for (TerminationCondition terminationCondition : TerminationCondition.values()) {
+      for (AttributeType attributeType : AttributeType.values()) {
+        for (AllowedSolutions allowedSolutions : AllowedSolutions.values()) {
+          solvers.add(new TabuSearch(InitialSolutionType.GREEDY, terminationCondition,
+              attributeType, allowedSolutions));
+        }
+      }
+    }
+
 
     for (SolverInterface<?> solver : solvers) {
       int index = 0;
