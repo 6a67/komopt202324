@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * TabuSearch is an implementation of the SolverInterface that uses the Tabu Search algorithm to solve the knapsack problem.
+ * It generates an initial solution and then iteratively explores the neighborhood of the current solution by flipping one bit at a time.
+ * The algorithm keeps track of a tabu list to prevent revisiting previously explored solutions.
+ * The search terminates based on a specified termination condition, such as a maximum number of iterations or a limit on the number of iterations without improvement.
+ */
 public class TabuSearch implements SolverInterface<Solution> {
 
   private int tabuListSize = 100;
@@ -53,6 +59,12 @@ public class TabuSearch implements SolverInterface<Solution> {
   }
 
 
+  /**
+   * Solves the knapsack problem using the Tabu Search algorithm.
+   * 
+   * @param instance  The instance of the problem.
+   * @return  The best solution found.
+   */
   @Override
   public Solution solve(Instance instance) {
     // Print configuration
@@ -127,9 +139,7 @@ public class TabuSearch implements SolverInterface<Solution> {
         }
       }
 
-      // no valid solution found, switching to another search branch
-      // Um das Verfahren trotzdem fortsetzen zu können, löschen wir solange den ältesten Eintrag in der Tabuliste,
-      // bis ein zulässiger Nachbar existiert
+      // To continue the procedure, delete the oldest entry in the tabu list until a feasible neighbor exists
       if (bestNeighbor == null) {
         tabuList.remove(0);
         tabuListIndices.remove(0);
@@ -186,6 +196,13 @@ public class TabuSearch implements SolverInterface<Solution> {
     return "Tabu(s)";
   }
 
+  /**
+   * Generates an initial solution.
+   * 
+   * @param instance  The instance of the problem.
+   * @param type  The type of the initial solution.
+   * @return  The generated solution.
+   */
   private Solution generateInitialSolution(Instance instance, InitialSolutionType type) {
     Solution initialSolution = null;
 
@@ -203,6 +220,12 @@ public class TabuSearch implements SolverInterface<Solution> {
     return initialSolution;
   }
 
+  /**
+   * Generates a random solution.
+   * 
+   * @param instance  The instance of the problem.
+   * @return  The generated solution.
+   */
   private Solution generateRandomSolution(Instance instance) {
     // random permutation of indices of items
     int[] indices = new int[instance.getWeightArray().length];
@@ -234,6 +257,14 @@ public class TabuSearch implements SolverInterface<Solution> {
     return solution;
   }
 
+  /**
+   * Generates the neighborhood of a given solution by flipping one bit at a time.
+   * Each neighbor is represented by a Tuple object containing the modified solution and the index of the flipped bit.
+   *
+   * @param solution  The current solution.
+   * @param instance  The instance of the problem.
+   * @return  The list of neighbors generated.
+   */
   private List<Tuple> generateNeighborhood(Solution solution, Instance instance) {
     List<Tuple> neighborhood = new ArrayList<>();
 
@@ -248,10 +279,19 @@ public class TabuSearch implements SolverInterface<Solution> {
     return neighborhood;
   }
 
+  /**
+   * Represents a tuple consisting of a solution and an index.
+   */
   private class Tuple {
     public Solution solution;
     public int index;
 
+    /**
+     * Constructs a Tuple object with the given solution and index.
+     * 
+     * @param solution the solution
+     * @param index the index
+     */
     public Tuple(Solution solution, int index) {
       this.solution = solution;
       this.index = index;
