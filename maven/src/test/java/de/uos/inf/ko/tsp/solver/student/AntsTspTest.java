@@ -13,6 +13,8 @@ import org.junit.Test;
 import de.uos.inf.ko.tsp.reader.Reader;
 import de.uos.inf.ko.tsp.solver.student.Ants;
 
+import java.text.DecimalFormat;
+
 public class AntsTspTest {
 
   private static final List<String> FILENAMES = Arrays.asList("tsp1.txt", "tsp2.txt", "tsp3.txt");
@@ -30,13 +32,38 @@ public class AntsTspTest {
 
   @Test
   public void testAllInstances() throws IOException {
-
     for (String filename : FILENAMES) {
       Instance instance = Reader.readInstance("src/test/resources/tsp/" + filename);
       Ants ants = new Ants();
+
+      long startTime = System.currentTimeMillis();
       final List<Integer> tour = ants.solve(instance);
+      long endTime = System.currentTimeMillis();
+      long elapsedTime = endTime - startTime;
+
+      System.out.println("tour: " + tour);
+      System.out.println("Elapsed time: " + elapsedTime + "ms");
+
+      double cost = calculateTourCost(instance, tour);
+      System.out.println("cost: " + formatCost(cost));
+      System.out.println();
+
       assertFeasibility(instance, tour);
     }
+  }
+
+  private double calculateTourCost(Instance instance, List<Integer> tour) {
+    double cost = 0;
+    for (int i = 0; i < tour.size() - 1; i++) {
+      cost += instance.getDistance(tour.get(i), tour.get(i + 1));
+    }
+    cost += instance.getDistance(tour.get(tour.size() - 1), tour.get(0));
+    return cost;
+  }
+
+  private String formatCost(double cost) {
+    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+    return decimalFormat.format(cost);
   }
 
   private static void assertFeasibility(Instance instance, List<Integer> tour) {
