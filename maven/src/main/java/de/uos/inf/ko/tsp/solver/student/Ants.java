@@ -29,6 +29,10 @@ public class Ants {
     this(1.0, 5.0, 0.5, 100, 100);
   }
 
+  public Ants(int numAnts, int numIterations) {
+    this(1.0, 5.0, 0.5, numAnts, numIterations);
+  }
+
   public Ants(double alpha, double beta, double rho, int numAnts, int numIterations) {
     this.alpha = alpha;
     this.beta = beta;

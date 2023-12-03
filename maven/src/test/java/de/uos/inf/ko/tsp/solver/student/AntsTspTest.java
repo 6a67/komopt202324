@@ -34,21 +34,33 @@ public class AntsTspTest {
   public void testAllInstances() throws IOException {
     for (String filename : FILENAMES) {
       Instance instance = Reader.readInstance("src/test/resources/tsp/" + filename);
-      Ants ants = new Ants();
 
-      long startTime = System.currentTimeMillis();
-      final List<Integer> tour = ants.solve(instance);
-      long endTime = System.currentTimeMillis();
-      long elapsedTime = endTime - startTime;
+      int[] numAnts = {10, 20, 50, 100};
+      int[] numIt = {10, 50, 100};
 
-      System.out.println("tour: " + tour);
-      System.out.println("Elapsed time: " + elapsedTime + "ms");
+      for (int i = 0; i < numAnts.length; i++) {
+        for (int j = 0; j < numIt.length; j++) {
+          Ants ants = new Ants(numAnts[i], numIt[j]);
 
-      double cost = calculateTourCost(instance, tour);
-      System.out.println("cost: " + formatCost(cost));
-      System.out.println();
+          long startTime = System.currentTimeMillis();
+          final List<Integer> tour = ants.solve(instance);
+          long endTime = System.currentTimeMillis();
+          long elapsedTime = endTime - startTime;
 
-      assertFeasibility(instance, tour);
+          System.out.println("instance: " + filename);
+          System.out.println("numAnts: " + numAnts[i]);
+          System.out.println("numIt: " + numIt[j]);
+
+          // System.out.println("tour: " + tour);
+          System.out.println("Elapsed time: " + elapsedTime + "ms");
+
+          double cost = calculateTourCost(instance, tour);
+          System.out.println("cost: " + formatCost(cost));
+          System.out.println();
+
+          assertFeasibility(instance, tour);
+        }
+      }
     }
   }
 
