@@ -1,17 +1,11 @@
 package de.uos.inf.ko.knapsack.solver.student;
 
-import de.uos.inf.ko.knapsack.Instance;
 import de.uos.inf.ko.knapsack.Solution;
 import de.uos.inf.ko.knapsack.SolverInterface;
 import de.uos.inf.ko.knapsack.Instance;
-import de.uos.inf.ko.knapsack.Item;
-import de.uos.inf.ko.knapsack.Solution;
-import de.uos.inf.ko.knapsack.SolverInterface;
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.Random;
-import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * TabuSearch is an implementation of the SolverInterface that uses the Tabu Search algorithm to solve the knapsack problem.
