@@ -14,16 +14,15 @@ import java.util.Random;
 public class Ants {
   private double[][] tau; // pheromone matrix
   private double[][] eta; // visibility matrix
-  private double[][] delta; // pheromone update matrix
 
-  private double alpha; // pheromone importance factor
-  private double beta; // visibility importance factor
-  private double rho; // pheromone evaporation rate
+  private final double alpha; // pheromone importance factor
+  private final double beta; // visibility importance factor
+  private final double rho; // pheromone evaporation rate
 
-  private int numAnts; // number of ants
-  private int numIterations; // number of iterations
+  private final int numAnts; // number of ants
+  private final int numIterations; // number of iterations
 
-  private Random random = new Random();
+  private final Random random = new Random();
 
   public Ants() {
     this(1.0, 5.0, 0.5, 100, 100);
@@ -119,8 +118,9 @@ public class Ants {
     tour.add(startCity);
     visited[startCity] = true;
 
-    for (int i = 1; i < numCities; i++) {
-      int currentCity = tour.get(i - 1);
+    // iterate through the remaining cities
+    for (int i = 0; i < numCities-1; i++) {
+      int currentCity = tour.get(i);
       int nextCity = selectNextCity(instance, currentCity, visited);
       tour.add(nextCity);
       visited[nextCity] = true;
@@ -153,8 +153,16 @@ public class Ants {
       }
     }
 
+    double sumProbability = 0.0;
+    for (int city = 0; city < numCities; city++) {
+      if (!visited[city]) {
+        probabilities[city] = probabilities[city] / totalProbability;
+        sumProbability += probabilities[city];
+      }
+    }
+
     // Select a random value within the total probability
-    double randomValue = random.nextDouble() * totalProbability;
+    double randomValue = random.nextDouble() * sumProbability;
     double cumulativeProbability = 0.0;
 
     // Find the city corresponding to the selected random value
@@ -197,7 +205,8 @@ public class Ants {
    */
   private void updatePheromoneMatrix(Instance instance, List<List<Integer>> antTours) {
     int numCities = instance.getNumCities();
-    delta = new double[numCities][numCities];
+    // pheromone update matrix
+    double[][] delta = new double[numCities][numCities];
 
     // Update delta matrix based on the tour lengths
     for (List<Integer> tour : antTours) {
@@ -213,7 +222,11 @@ public class Ants {
     // Update tau matrix based on the evaporation and deposition of pheromones
     for (int i = 0; i < numCities; i++) {
       for (int j = 0; j < numCities; j++) {
-        tau[i][j] = (1 - rho) * tau[i][j] + delta[i][j];
+        double deltaSum = 0.0;
+        for (int k = 0; k < numAnts; k++) {
+          deltaSum += delta[i][j];
+        }
+        tau[i][j] = (1 - rho) * tau[i][j] + deltaSum;
       }
     }
   }
