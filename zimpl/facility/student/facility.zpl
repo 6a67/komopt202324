@@ -29,3 +29,17 @@ do forall <j> in N do forall <i> in S do print c[i,j];
 
 # TODO: create variables, setup objective function and constraints
 
+# add variables
+set E := {<i,j> in S*N};
+var x[E] >= 0;  # amount of goods delivered from facility i to customer j
+var y[S] binary;    # y[i] = 1 if facility i is open
+
+# objective function
+minimize costs: sum <i> in S do F[i] * y[i] + sum <j> in N do sum <i> in S do c[i,j] * x[i,j];
+
+# constraints
+subto demand: forall <j> in N do
+    (sum <i> in S : x[i,j]) == b[j];
+subto capacity: forall <i> in S do
+    (sum <j> in N : x[i,j]) - K[i] * y[i] <= 0;
+
